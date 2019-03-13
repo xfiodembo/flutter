@@ -201,8 +201,7 @@ class UiKitView extends StatefulWidget {
   /// Creates a widget that embeds an iOS view.
   ///
   /// {@macro flutter.widgets.platformViews.constructorParams}
-  UiKitView({ // ignore: prefer_const_constructors_in_immutables
-    // TODO(aam): Remove lint ignore above once https://dartbug.com/34297 is fixed
+  const UiKitView({
     Key key,
     @required this.viewType,
     this.onPlatformViewCreated,
@@ -298,7 +297,7 @@ class _AndroidViewState extends State<AndroidView> {
   bool _initialized = false;
 
   static final Set<Factory<OneSequenceGestureRecognizer>> _emptyRecognizersSet =
-    Set<Factory<OneSequenceGestureRecognizer>>();
+    <Factory<OneSequenceGestureRecognizer>>{};
 
   @override
   Widget build(BuildContext context) {
@@ -368,10 +367,12 @@ class _AndroidViewState extends State<AndroidView> {
       id: _id,
       viewType: widget.viewType,
       layoutDirection: _layoutDirection,
-      onPlatformViewCreated: widget.onPlatformViewCreated,
       creationParams: widget.creationParams,
       creationParamsCodec: widget.creationParamsCodec,
     );
+    if (widget.onPlatformViewCreated != null) {
+      _controller.addOnPlatformViewCreatedListener(widget.onPlatformViewCreated);
+    }
   }
 }
 
@@ -381,7 +382,7 @@ class _UiKitViewState extends State<UiKitView> {
   bool _initialized = false;
 
   static final Set<Factory<OneSequenceGestureRecognizer>> _emptyRecognizersSet =
-    Set<Factory<OneSequenceGestureRecognizer>>();
+    <Factory<OneSequenceGestureRecognizer>>{};
 
   @override
   Widget build(BuildContext context) {

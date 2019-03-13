@@ -211,7 +211,7 @@ enum ListTileControlAffinity {
 ///  * [ListTile.divideTiles], a utility for inserting [Divider]s in between [ListTile]s.
 ///  * [CheckboxListTile], [RadioListTile], and [SwitchListTile], widgets
 ///    that combine [ListTile] with other controls.
-///  * <https://material.google.com/components/lists.html>
+///  * <https://material.io/design/components/lists.html>
 class ListTile extends StatelessWidget {
   /// Creates a list tile.
   ///
@@ -444,7 +444,7 @@ class ListTile extends StatelessWidget {
     final Widget titleText = AnimatedDefaultTextStyle(
       style: titleStyle,
       duration: kThemeChangeDuration,
-      child: title ?? const SizedBox()
+      child: title ?? const SizedBox(),
     );
 
     Widget subtitleText;
@@ -738,7 +738,7 @@ class _RenderListTile extends RenderBox {
   }
 
   // The returned list is ordered for hit testing.
-  Iterable<RenderBox> get _children sync *{
+  Iterable<RenderBox> get _children sync* {
     if (leading != null)
       yield leading;
     if (title != null)
@@ -883,7 +883,7 @@ class _RenderListTile extends RenderBox {
   double computeMinIntrinsicHeight(double width) {
     return math.max(
       _defaultTileHeight,
-      title.getMinIntrinsicHeight(width) + (subtitle?.getMinIntrinsicHeight(width) ?? 0.0)
+      title.getMinIntrinsicHeight(width) + (subtitle?.getMinIntrinsicHeight(width) ?? 0.0),
     );
   }
 

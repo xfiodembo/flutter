@@ -45,7 +45,7 @@ abstract class RunCommandBase extends FlutterCommand {
               'compiler up to that point. This file can be used in subsequent --dynamic builds '
               'to precompile some code by the offline compiler. '
               'This flag is only allowed when running as --dynamic --profile (recommended) or '
-              '--debug (may include unwanted debug symbols).'
+              '--debug (may include unwanted debug symbols).',
       )
       ..addOption('target-platform',
         defaultsTo: 'default',
@@ -339,16 +339,25 @@ class RunCommand extends RunCommandBase {
       throwToolExit('Error: --train is only allowed when running as --dynamic --profile '
           '(recommended) or --debug (may include unwanted debug symbols).');
 
-    final List<FlutterDevice> flutterDevices = devices.map<FlutterDevice>((Device device) {
-      return FlutterDevice(
+    List<String> expFlags;
+    if (argParser.options.containsKey(FlutterOptions.kEnableExperiment) &&
+        argResults[FlutterOptions.kEnableExperiment].isNotEmpty) {
+      expFlags = argResults[FlutterOptions.kEnableExperiment];
+    }
+    final List<FlutterDevice> flutterDevices = <FlutterDevice>[];
+    for (Device device in devices) {
+      final FlutterDevice flutterDevice = await FlutterDevice.create(
         device,
         trackWidgetCreation: argResults['track-widget-creation'],
         dillOutputPath: argResults['output-dill'],
         fileSystemRoots: argResults['filesystem-root'],
         fileSystemScheme: argResults['filesystem-scheme'],
         viewFilter: argResults['isolate-filter'],
+        experimentalFlags: expFlags,
+        target: argResults['target'],
       );
-    }).toList();
+      flutterDevices.add(flutterDevice);
+    }
 
     ResidentRunner runner;
     final String applicationBinaryPath = argResults['use-application-binary'];
@@ -391,9 +400,9 @@ class RunCommand extends RunCommandBase {
     // Do not add more operations to the future.
     final Completer<void> appStartedTimeRecorder = Completer<void>.sync();
     // This callback can't throw.
-    appStartedTimeRecorder.future.then<void>( // ignore: unawaited_futures
+    unawaited(appStartedTimeRecorder.future.then<void>(
       (_) { appStartedTime = systemClock.now(); }
-    );
+    ));
 
     final int result = await runner.run(
       appStartedCompleter: appStartedTimeRecorder,
@@ -410,7 +419,7 @@ class RunCommand extends RunCommandBase {
         devices.length == 1
             ? getNameForTargetPlatform(await devices[0].targetPlatform)
             : 'multiple',
-        devices.length == 1 && await devices[0].isLocalEmulator ? 'emulator' : null
+        devices.length == 1 && await devices[0].isLocalEmulator ? 'emulator' : null,
       ],
       endTimeOverride: appStartedTime,
     );

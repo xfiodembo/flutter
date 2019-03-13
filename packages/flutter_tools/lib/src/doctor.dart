@@ -50,7 +50,7 @@ class _DefaultDoctorValidatorsProvider implements DoctorValidatorsProvider {
   List<DoctorValidator> get validators {
     if (_validators == null) {
       _validators = <DoctorValidator>[];
-      _validators.add(_FlutterValidator());
+      _validators.add(FlutterValidator());
 
       if (androidWorkflow.appliesToHostPlatform)
         _validators.add(GroupedValidator(<DoctorValidator>[androidValidator, androidLicenseValidator]));
@@ -312,7 +312,7 @@ class GroupedValidator extends DoctorValidator {
   String _currentSlowWarning = 'Initializing...';
 
   @override
-  Future<ValidationResult> validate() async  {
+  Future<ValidationResult> validate() async {
     final List<ValidatorTask> tasks = <ValidatorTask>[];
     for (DoctorValidator validator in subValidators) {
       tasks.add(ValidatorTask(validator, validator.validate()));
@@ -438,8 +438,8 @@ class ValidationMessage {
   String toString() => message;
 }
 
-class _FlutterValidator extends DoctorValidator {
-  _FlutterValidator() : super('Flutter');
+class FlutterValidator extends DoctorValidator {
+  FlutterValidator() : super('Flutter');
 
   @override
   Future<ValidationResult> validate() async {
@@ -467,7 +467,7 @@ class _FlutterValidator extends DoctorValidator {
     }
 
     return ValidationResult(valid, messages,
-      statusInfo: userMessages.flutterStatusInfo(version.channel, version.frameworkVersion, os.name, platform.localeName)
+      statusInfo: userMessages.flutterStatusInfo(version.channel, version.frameworkVersion, os.name, platform.localeName),
     );
   }
 }
